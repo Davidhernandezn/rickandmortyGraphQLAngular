@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DataService } from '@app/shared/services/data.service';
 
 @Component({
   selector: 'app-characteres-list',
@@ -7,9 +8,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CharacteresListComponent implements OnInit {
 
-  constructor() { }
+  //INYECTAR SERVICES
+  constructor(private dataSvc: DataService) { }
 
   ngOnInit(): void {
+    //LLAMAR AL SERVICIO
+    console.log('Inicia charactera list..');
+    this.dataSvc.getDataAPI();
   }
 
 }
