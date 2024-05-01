@@ -5,6 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { GraphQLModule } from './graphql.module';
 import { HttpClientModule } from '@angular/common/http';
+import { HeaderModule } from '@shared/components/header/header.module';//IMPORTA, PODEMOS USAR EL ALIAS DE LA RUTA
 
 @NgModule({
   declarations: [
@@ -14,7 +15,8 @@ import { HttpClientModule } from '@angular/common/http';
     BrowserModule,
     AppRoutingModule,
     GraphQLModule,
-    HttpClientModule
+    HttpClientModule,
+    HeaderModule//IMPORTAR PARA USAR
   ],
   providers: [],
   bootstrap: [AppComponent]
