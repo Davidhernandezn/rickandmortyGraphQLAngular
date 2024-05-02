@@ -1,7 +1,9 @@
+import { DataResponse, Episode } from './../interfaces/data.interface';
 import { Injectable } from '@angular/core';
 import { Apollo, gql } from 'apollo-angular'; //IMPORTAR
 import { BehaviorSubject } from 'rxjs';
 import { take, tap } from 'rxjs/operators' ;//PARA CONSUMIR usamos estos operadores
+import { Character } from '../interfaces/data.interface';
 
 //DEFINE LO QUE DESEAS OBTENER
 const QUERY = gql`{
@@ -37,12 +39,12 @@ const QUERY = gql`{
 export class DataService {
   //OBSEVABLE 1
   //CREAR E INICIALIZARLO EN NULL (BehaviorSubject)
-  private episodesSubject = new BehaviorSubject <any[]>(null);
+  private episodesSubject = new BehaviorSubject <Episode[]>(null);//NO USAR VALORES TIPO ANY HAY QUE CREAR SU INTERFAZ
   //crear propiedad   episodes$  por observable
   episodes$ = this.episodesSubject.asObservable();
 
   //OBSERVABLE 2
-  private charactersSubject = new BehaviorSubject <any[]>(null);
+  private charactersSubject = new BehaviorSubject <Character[]>(null);//NO USAR VALORES TIPO ANY
   characters$ = this.charactersSubject.asObservable();
 
   //DECLARA PROPIEDAD
@@ -57,15 +59,15 @@ private async getDataAPI() {
     console.log('Método Servidor...')
 
     // Usa petición watchQuery
-    this.apollo.watchQuery<any>({
+    this.apollo.watchQuery<DataResponse>({//DataResponse POR QUE TRAE A EPISODES Y CHARACTER DEFINIDO EN LA INTERFACE
         query: QUERY
     }).valueChanges.pipe(
         take(1),
         tap(({data}) => {//DESTRUCTURING
           //DESTRUCTURING DE DATA (PODEMOS ACCEDER AL LOS OBSERVABLES)
           const {characters, episodes} = data;
-          this.episodesSubject.next(episodes.results)
-          this.charactersSubject.next(characters.results)
+          this.episodesSubject.next(episodes.result)
+          this.charactersSubject.next(characters.result)
           console.log('Respuesta...')
         })
     ).subscribe({
