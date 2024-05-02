@@ -37,13 +37,13 @@ const QUERY = gql`{
 export class DataService {
   //OBSEVABLE 1
   //CREAR E INICIALIZARLO EN NULL (BehaviorSubject)
-  private episodesSubjext = new BehaviorSubject <any[]>(null);
+  private episodesSubject = new BehaviorSubject <any[]>(null);
   //crear propiedad   episodes$  por observable
-  episodes$ = this.episodesSubjext.asObservable();
+  episodes$ = this.episodesSubject.asObservable();
 
   //OBSERVABLE 2
-  private charactersSubjext = new BehaviorSubject <any[]>(null);
-  characters$ = this.charactersSubjext.asObservable();
+  private charactersSubject = new BehaviorSubject <any[]>(null);
+  characters$ = this.charactersSubject.asObservable();
 
   //DECLARA PROPIEDAD
   constructor(private apollo: Apollo) {
@@ -53,7 +53,7 @@ export class DataService {
 
   //PETICION CON APOLLO
   //NO USAR PRIVATE SI AUN NO GUARDAS EL RESULTADO EN NINGUN OBSERVABLE, PODEMOS LLAMARLO DESDE UN COMPONENTE
-async getDataAPI() {
+private async getDataAPI() {
     console.log('Método Servidor...')
 
     // Usa petición watchQuery
@@ -61,9 +61,12 @@ async getDataAPI() {
         query: QUERY
     }).valueChanges.pipe(
         take(1),
-        tap(res => {
-            console.log('Respuesta...')
-            console.log(res);
+        tap(({data}) => {//DESTRUCTURING
+          //DESTRUCTURING DE DATA (PODEMOS ACCEDER AL LOS OBSERVABLES)
+          const {characters, episodes} = data;
+          this.episodesSubject.next(episodes.results)
+          this.charactersSubject.next(characters.results)
+          console.log('Respuesta...')
         })
     ).subscribe({
         next: (data) => {
