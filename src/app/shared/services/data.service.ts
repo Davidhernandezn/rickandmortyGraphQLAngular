@@ -52,6 +52,21 @@ export class DataService {
     this.getDataAPI(); //EJECUTARSE CADA VEZ QUE LA INSTANCIA DE LA CLASE SE EJECUTE
    }
 
+/** 
+private getDataAPI():void{
+  this.apollo.watchQuery<DataResponse>({
+    query:QUERY
+  }).valueChanges.pipe(
+    take(1),
+    tap(({data}) =>{
+      const {characters, episodes} = data;
+      console.log('DAT', data)
+      this.charactersSubject.next(characters.results || []);
+      this.episodesSubject.next(episodes.results || []);
+    })
+  ).subscribe();
+}**/
+
 
   //PETICION CON APOLLO
   //NO USAR PRIVATE SI AUN NO GUARDAS EL RESULTADO EN NINGUN OBSERVABLE, PODEMOS LLAMARLO DESDE UN COMPONENTE
@@ -66,9 +81,13 @@ private async getDataAPI() {
         tap(({data}) => {//DESTRUCTURING
           //DESTRUCTURING DE DATA (PODEMOS ACCEDER AL LOS OBSERVABLES)
           const {characters, episodes} = data;
-          this.episodesSubject.next(episodes.result)
-          this.charactersSubject.next(characters.result)
+          console.log('Episodes: before', episodes.results);
+
+          this.episodesSubject.next(episodes.results)
+          console.log('Episodes emitted:', episodes.results);
+          this.charactersSubject.next(characters.results)
           console.log('Respuesta...')
+
         })
     ).subscribe({
         next: (data) => {
@@ -85,7 +104,5 @@ private async getDataAPI() {
         }
     });
 }
-
-
 
 }

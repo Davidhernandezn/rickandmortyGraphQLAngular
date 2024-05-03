@@ -1,1 +1,8 @@
-<p>episodes works!</p>
+<section class="container">
+    <ul class="episodes__list">
+        <!-- Leer propiedad episodes (observable) -->
+        <li *ngFor="let episod of episodes$ | async">
+            {{ episod.name }} - {{ episod.episode }}
+        </li>
+    </ul>
+</section>

@@ -1,6 +1,6 @@
 //GENERIC
 export interface APIResponse<T>{
-    result: T;
+    results: T;
 }
 
 //PARA USAR DE ESTA MANERA Y EVITAR PONER DE QUE TIPO ES EL RESULTADO USANDO GENERIC

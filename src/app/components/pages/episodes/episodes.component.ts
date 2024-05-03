@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DataService } from '@app/shared/services/data.service';
 
 @Component({
   selector: 'app-episodes',
@@ -7,9 +8,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class EpisodesComponent implements OnInit {
 
-  constructor() { }
+  //CREAR VARIABLE IGUALANDO A LA PROPIEDAD OBSERVABLE
+  episodes$;
+
+  //INYECTA SERVICIO
+  constructor( private dataService : DataService) { }
 
   ngOnInit(): void {
+    this.episodes$ = this.dataService.episodes$;
+    this.episodes$.subscribe((episodes) => {
+      console.log('Episodes:', episodes);
+    });
   }
 
 }
