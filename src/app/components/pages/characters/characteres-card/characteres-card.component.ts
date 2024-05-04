@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { Character } from '@app/shared/interfaces/data.interface';
+import { LocalStorageService } from '@app/shared/services/localStorage.service';
 
 @Component({
   selector: 'app-characteres-card',
@@ -9,7 +10,8 @@ import { Character } from '@app/shared/interfaces/data.interface';
 })
 export class CharacteresCardComponent implements OnInit {
 @Input() character:Character;
-  constructor() { }
+//inyectamos
+  constructor(private localStorageSvc: LocalStorageService) { }
 
   ngOnInit(): void {
   }
@@ -24,6 +26,7 @@ export class CharacteresCardComponent implements OnInit {
     this.getIcon();
     this.character.isFavorite = !isFavorite;//VALIDA PARA SER TRUE O FALSE
     //validar que favorite este definido como propiedad 
+    this.localStorageSvc.addOrRemoveFavorite(this.character);//espera character
   }
 
 }

@@ -4,6 +4,7 @@ import { Apollo, gql } from 'apollo-angular'; //IMPORTAR
 import { BehaviorSubject } from 'rxjs';
 import { take, tap } from 'rxjs/operators' ;//PARA CONSUMIR usamos estos operadores
 import { Character } from '../interfaces/data.interface';
+import { LocalStorageService } from './localStorage.service';
 
 //DEFINE LO QUE DESEAS OBTENER
 const QUERY = gql`{
@@ -48,7 +49,8 @@ export class DataService {
   characters$ = this.charactersSubject.asObservable();
 
   //DECLARA PROPIEDAD
-  constructor(private apollo: Apollo) {
+  //inyectamos otro servicio
+  constructor(private apollo: Apollo, private localStorageSvc: LocalStorageService) {
     this.getDataAPI(); //EJECUTARSE CADA VEZ QUE LA INSTANCIA DE LA CLASE SE EJECUTE
    }
 
@@ -85,9 +87,9 @@ private async getDataAPI() {
 
           this.episodesSubject.next(episodes.results)
           console.log('Episodes emitted:', episodes.results);
-          this.charactersSubject.next(characters.results)
+          //this.charactersSubject.next(characters.results) // YA LO MANDAMOS EN EL METODO PARSE CHARA..
           console.log('Respuesta...')
-
+          this.parseCharactersData(characters.results);
         })
     ).subscribe({
         next: (data) => {
@@ -105,4 +107,21 @@ private async getDataAPI() {
     });
 }
 
-}
+
+//NO PUEDO TRABAJAR EN EL MISMO OBJETO RECIBIDO 
+//CON LOS PERSONAJES POR LO QUE LO MANEJAMOS APARTE AGREGAR SI ES FAVORITE EN EL LOCALSTORAGE TRUE FALSE
+//RECIVIMO CHARACTERS
+private parseCharactersData(characters: Character[]):void{
+//PARA RECUPERAR FAVORITOS DEL LOCAL STORAGE LO TENEMOS EN EL OTRO SERVICE
+  const currentFavs = this.localStorageSvc.getFavoritesCharacters();
+  //RECORRER ARRAY RECIBIDO CON MAP
+  const newData = characters.map(character => {//RECORRE API
+    //BUSCAR SI EL PERSONAJE ES FAVORITO O NO
+    //DEVUELVE COINCIDENCIA SI ESTA EN EL LOCAL STORAGE CORRESPONDE A LOS QUE SE RECUPERARON DEL API
+    const found = !!currentFavs.find((fav: Character) => fav.id === character.id);//DEVUELVE LA PRIMERA COINCIDENCIA (VALIDA SI SE HA ENCONTRADO O NO) TRUE FALSE
+    return { ...character, isFavorite:found };//DEVUELVE PERSONAJE RECORRIDO Y FAVITE SE LE ASIGNA VALOR DE TRUE O FALSE
+  });
+
+  this.charactersSubject.next(newData);
+
+}}
