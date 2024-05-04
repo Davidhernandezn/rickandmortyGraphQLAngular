@@ -1,1 +1,9 @@
-<p>home works!</p>
+<!--<pre>
+    PARA MOSTRARLOS
+    {{charactersFav$ | async | json}}
+</pre>-->
+
+<section class="character__list">
+    <!--PASAMOS OBSERVABLE charactersFav$-->
+    <app-characteres-card *ngFor="let character of charactersFav$ | async" [character]="character"></app-characteres-card>
+</section>
