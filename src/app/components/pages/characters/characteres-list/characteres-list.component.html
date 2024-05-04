@@ -1,2 +1,6 @@
-<p>characteres-list works!</p>
-{{ characters$ | async | json}}
+<section class="character__list">
+    <!--COMO ES UN OBSERVABLE USAR PIPE ASYNC
+    comunicaion con componente hijo usado @input en hijo
+    importar el componente para utilizarlo-->
+    <app-characteres-card *ngFor="let character of characters$  | async" [character]="character"></app-characteres-card>
+</section>
