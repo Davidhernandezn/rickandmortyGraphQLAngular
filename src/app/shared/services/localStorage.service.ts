@@ -1,6 +1,7 @@
 import { Injectable, ɵCompiler_compileModuleAndAllComponentsAsync__POST_R3__ } from "@angular/core"; 
 import { BehaviorSubject } from "rxjs";
 import { Character } from "../interfaces/data.interface";
+import { ToastrService } from "ngx-toastr";
 
 const MY_FAVORITES = 'myFavorites';
 
@@ -13,7 +14,8 @@ export class LocalStorageService{
     private charactersFavSubject = new BehaviorSubject<Character[]>(null);//AL SER BehaviorSubject NECESITA UN VALOR por defecto
     charactersFav$ = this.charactersFavSubject.asObservable();
 
-    constructor(){
+    //INYECTAMOS SERVICE DEL TOAST
+    constructor(private toastrSvc : ToastrService){
         //cuando se inicialize la clase llamar al metodo
         this.initialStorage();
     }
@@ -38,8 +40,10 @@ export class LocalStorageService{
             localStorage.setItem(MY_FAVORITES, JSON.stringify([...currentsFav, character])); //PASAMOS FAVORITOS Y GUARDAMOS EL VARITO QUE  RECIBIMOS
             //ACTUALIZAMOS OBSERVABLE
             this.charactersFavSubject.next([...currentsFav, character]);//LO QUE SE TIENE Y LO QUE SE QIUIERE GUARDAR
+            this.toastrSvc.success( ` ${character.name} agregago`, 'Favoritos');
         } catch (error) {
-            console.log('Error al agregar a favoritos',error)
+            //console.log('Error al agregar a favoritos',error)
+            this.toastrSvc.error( ` ${character.name} Error al agregar a favoritos`, 'Favoritos');
             //alert('Error')
         }
     }
@@ -52,8 +56,10 @@ export class LocalStorageService{
         const characters = currentsFav.filter(item => item.id === id);//devuelve nuevo array con los elementos diferentes al id agegadfo
         localStorage.setItem(MY_FAVORITES, JSON.stringify([...characters]));
         this.charactersFavSubject.next([...characters]);//LO QUE SE TIENE Y LO QUE SE QIUIERE GUARDAR
+        this.toastrSvc.warning( ` ${characters} Eliminado de favorito`, 'Favoritos');
         } catch (error) {
             console.log('Error ',error)
+            this.toastrSvc.error( ` ${error} Error al agregar a favoritos`, 'Favoritos');
         }
         
     }
